@@ -1,0 +1,40 @@
+version: "3.3"
+
+services:
+  traefik:
+    image: "traefik:v2.9"
+    container_name: "as-traefik"
+    restart: unless-stopped
+    command:
+      - "--log.level=DEBUG"
+      - "--api.insecure=true" # Enable the Trafik dashboard
+      - "--providers.docker=true" # Tell Traefik to discover containers using the Docker API
+      - "--providers.docker.exposedbydefault=false" # Create routing configuration only for containers with traefik.enable=true
+      - "--providers.file.directory=/etc/traefik/dynamic_conf"
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls=true
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.example.com`)"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "./traefik_conf.yml:/etc/traefik/dynamic_conf/conf.yml:ro"
+      - "./certs:/etc/certs"
+  whoami:
+    image: "traefik/whoami"
+    container_name: "as-whoami"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.example.com`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      # Forces the whoami router to use TLS
+      # - "traefik.http.routers.whoami.tls=true"
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
