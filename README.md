@@ -8,7 +8,14 @@
 6. append to `/etc/hosts`
 ```
 127.0.0.1 traefik.example.com
-127.0.0.1 whoami.example.com
+127.0.0.1 authelia.example.com
+127.0.0.1 page1.example.com
+127.0.0.1 page2.example.com
+127.0.0.1 page3.example.com
 ```
 7. `docker-compose up`
-8. now you can visit https://traefik.example.com/dashboard/#/ and https://whoami.example.com/
+8. now you can visit https://traefik.example.com (public access) and https://page1.example.com (secured by Authelia)
+
+Authelia Portal:
+- login: authelia
+- password: authelia
