@@ -13,6 +13,7 @@ server:
 log:
   level: debug
 
+default_2fa_method: totp
 totp:
   issuer: authelia.com
 
