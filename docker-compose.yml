@@ -18,7 +18,7 @@ services:
       - --entrypoints.websecure.http.tls=true
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik.rule=Host(`traefik.example.com`)"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`)"
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.middlewares=authelia@docker"
       - "traefik.http.services.traefik.loadbalancer.server.port=8080"
@@ -38,10 +38,10 @@ services:
       - ./authelia:/config
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.authelia.rule=Host(`authelia.example.com`)"
+      - "traefik.http.routers.authelia.rule=Host(`authelia.${DOMAIN}`)"
       - "traefik.http.routers.authelia.entrypoints=websecure"
       - "traefik.http.services.authelia.loadbalancer.server.port=9091"
-      - "traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://authelia.example.com"
+      - "traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://authelia.${DOMAIN}"
       - "traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true"
       - "traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email"
     expose:
@@ -58,7 +58,7 @@ services:
       - 80
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.page1.rule=Host(`page1.example.com`)"
+      - "traefik.http.routers.page1.rule=Host(`page1.${DOMAIN}`)"
       - "traefik.http.routers.page1.entrypoints=websecure"
       - "traefik.http.routers.page1.middlewares=authelia@docker"
       - "traefik.http.services.page1.loadbalancer.server.port=80"
@@ -70,19 +70,7 @@ services:
       - 80
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.page2.rule=Host(`page2.example.com`)"
+      - "traefik.http.routers.page2.rule=Host(`page2.${DOMAIN}`)"
       - "traefik.http.routers.page2.entrypoints=websecure"
       - "traefik.http.routers.page2.middlewares=authelia@docker"
       - "traefik.http.services.page2.loadbalancer.server.port=80"
-
-  whoami3:
-    image: traefik/whoami
-    container_name: as-whoami3
-    expose:
-      - 80
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.page3.rule=Host(`page3.example.com`)"
-      - "traefik.http.routers.page3.entrypoints=websecure"
-      - "traefik.http.routers.page3.middlewares=authelia@docker"
-      - "traefik.http.services.page3.loadbalancer.server.port=80"
