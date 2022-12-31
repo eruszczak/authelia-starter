@@ -6,7 +6,7 @@ services:
     container_name: as-traefik
     restart: unless-stopped
     command:
-      - "--log.level=DEBUG"
+      # - "--log.level=DEBUG"
       - "--api.insecure=true" # Enable the Trafik dashboard
       - "--providers.docker=true" # Tell Traefik to discover containers using the Docker API
       - "--providers.docker.exposedbydefault=false" # Create routing configuration only for containers with traefik.enable=true
@@ -46,14 +46,15 @@ services:
       - "traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email"
     expose:
       - 9091
-    healthcheck: ## In production the healthcheck section should be commented.
-      disable: true
     environment:
       - TZ=Europe/Warsaw
+    depends_on:
+      - openldap
 
   whoami:
     image: traefik/whoami
     container_name: as-whoami
+    restart: unless-stopped
     expose:
       - 80
     labels:
@@ -66,6 +67,7 @@ services:
   whoami2:
     image: traefik/whoami
     container_name: as-whoami2
+    restart: unless-stopped
     expose:
       - 80
     labels:
@@ -74,3 +76,38 @@ services:
       - "traefik.http.routers.page2.entrypoints=websecure"
       - "traefik.http.routers.page2.middlewares=authelia@docker"
       - "traefik.http.services.page2.loadbalancer.server.port=80"
+
+  openldap:
+    image: osixia/openldap:1.5.0
+    container_name: openldap
+    restart: unless-stopped
+    environment:
+      LDAP_LOG_LEVEL: "256"
+      LDAP_ORGANISATION: "LocalTest Inc."
+      LDAP_DOMAIN: "${DOMAIN}"
+      LDAP_BASE_DN: ""
+      LDAP_ADMIN_PASSWORD: "admin" # login 'cn=admin,dc=localtest,dc=me'
+      LDAP_TLS: "false"
+    volumes:
+      - './ldif-custom:/container/service/slapd/assets/config/bootstrap/ldif/custom'
+      - './volume-ldap:/var/lib/ldap'
+      - './volume-slapd:/etc/ldap/slapd.d'
+    command: "--copy-service"
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:0.9.0
+    container_name: phpldapadmin
+    restart: unless-stopped
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    expose:
+      - "80"
+    depends_on:
+      - openldap
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ldap.rule=Host(`ldap.${DOMAIN}`)"
+      - "traefik.http.routers.ldap.entrypoints=websecure"
+      - "traefik.http.routers.ldap.middlewares=authelia@docker"
+      - "traefik.http.services.ldap.loadbalancer.server.port=80"

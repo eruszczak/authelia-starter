@@ -1,0 +1,6 @@
+dn: cn=page1,dc=localtest,dc=me
+cn: page1
+member: uid=user0,dc=localtest,dc=me
+member: uid=user1,dc=localtest,dc=me
+objectclass: groupOfNames
+objectclass: top

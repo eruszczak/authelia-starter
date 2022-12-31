@@ -1,4 +1,3 @@
----
 ###############################################################
 #                   Authelia configuration                    #
 ###############################################################
@@ -15,20 +14,48 @@ log:
 default_2fa_method: totp
 totp:
   issuer: localtest.me
+webauthn:
+  disable: true
+duo_api:
+  disable: true
 
+# authentication_backend:
+  # file:
+    # path: /config/users_database.yml
 authentication_backend:
-  file:
-    path: /config/users_database.yml
+  ldap:
+    implementation: custom
+    url: ldap://openldap
+    timeout: 5s
+    base_dn: DC=localtest,DC=me
+    users_filter: (&(|({username_attribute}={input})({mail_attribute}={input}))(objectClass=account)) # To allow sign in both with username and email
+    # additional_users_dn: OU=users
+    # groups_filter: (&(member=UID={input},OU=users,DC=example,DC=com)(objectClass=groupOfNames))
+    groups_filter: (&(member={dn})(objectClass=groupOfNames))
+    # additional_groups_dn: OU=groups
+    group_name_attribute: cn
+    username_attribute: uid
+    mail_attribute: mail
+    display_name_attribute: description
+    user: cn=admin,dc=localtest,dc=me
+    password: admin
+    start_tls: false
 
 access_control:
-  default_policy: deny
+  default_policy: deny # deny access for subdomains not defined in the rules section 
   rules:
-    - domain: traefik.localtest.me
-      policy: bypass
     - domain: page1.localtest.me
+      # policy: two_factor
       policy: one_factor
+      subject:
+        - 'group:page1'
     - domain: page2.localtest.me
-      policy: two_factor
+      # policy: two_factor
+      policy: one_factor
+      subject:
+        - 'group:page2'
+    - domain: ['traefik.localtest.me', 'ldap.localtest.me']
+      policy: bypass
 
 session:
   name: authelia_session
@@ -50,4 +77,4 @@ storage:
 notifier:
   filesystem:
     filename: /config/notification.txt
-...
+

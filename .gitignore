@@ -1,3 +1,4 @@
-/certs
+/certs/*
 db.sqlite3
 notification.txt
+/volume-*
