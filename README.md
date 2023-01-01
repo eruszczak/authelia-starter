@@ -10,10 +10,10 @@
 To access any of the following applications, you will be redirected to the [Authelia portal](https://authelia.localtest.me/) where you will need to log in with the appropriate user.
 <table>
     <tr>
-        <td>Application</td>
-        <td>Access groups</td>
-        <td>Login/Password</td>
-        <td>Description</td>
+        <th>Application</th>
+        <th>Access groups</th>
+        <th>Login/Password</th>
+        <th>Description</th>
     </tr>
     <tr>
         <td>https://traefik.localtest.me</td>
@@ -24,7 +24,7 @@ To access any of the following applications, you will be redirected to the [Auth
     <tr>
         <td>https://ldap.localtest.me</td>
         <td>-</td>
-        <td>cn=admin,dc=localtest,dc=me / admin</td>
+        <td>cn=admin,dc=localtest,dc=me / password</td>
         <td>Web-based LDAP client</td>
     </tr>
     <tr>
@@ -46,10 +46,10 @@ You can use username or email for login.
 
 <table>
     <tr>
-        <td>Username</td>
-        <td>Email</td>
-        <td>Password</td>
-        <td>Groups</td>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Groups</th>
     </tr>
     <tr>
         <td>admin</td>
