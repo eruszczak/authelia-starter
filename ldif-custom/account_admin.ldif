@@ -1,10 +1,10 @@
-dn: uid=user2,dc=localtest,dc=me
-description: User 2
+dn: uid=admin,dc=localtest,dc=me
+description: Admin
 objectclass: account
 objectclass: simpleSecurityObject
 objectclass: top
 objectclass: PostfixBookMailAccount
 ou: users
-uid: user2
+uid: admin
 userpassword: {SSHA}87XWBJjDCnfwmxIE82YNXKFQaIvtaKL4
-mail: user2@eryk.io
+mail: admin@localtest.me

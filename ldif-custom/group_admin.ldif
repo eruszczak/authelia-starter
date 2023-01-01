@@ -1,0 +1,5 @@
+dn: cn=admin,dc=localtest,dc=me
+cn: admin
+member: uid=admin,dc=localtest,dc=me
+objectclass: groupOfNames
+objectclass: top

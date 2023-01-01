@@ -6,7 +6,7 @@ services:
     container_name: as-traefik
     restart: unless-stopped
     command:
-      # - "--log.level=DEBUG"
+      - "--log.level=DEBUG"
       - "--api.insecure=true" # Enable the Trafik dashboard
       - "--providers.docker=true" # Tell Traefik to discover containers using the Docker API
       - "--providers.docker.exposedbydefault=false" # Create routing configuration only for containers with traefik.enable=true
@@ -86,13 +86,13 @@ services:
       LDAP_ORGANISATION: "LocalTest Inc."
       LDAP_DOMAIN: "${DOMAIN}"
       LDAP_BASE_DN: ""
-      LDAP_ADMIN_PASSWORD: "admin" # login 'cn=admin,dc=localtest,dc=me'
+      LDAP_ADMIN_PASSWORD: "password" # login 'cn=admin,dc=localtest,dc=me'
       LDAP_TLS: "false"
     volumes:
       - './ldif-custom:/container/service/slapd/assets/config/bootstrap/ldif/custom'
       - './volume-ldap:/var/lib/ldap'
       - './volume-slapd:/etc/ldap/slapd.d'
-    command: "--copy-service"
+    command: "--copy-service --loglevel debug"
 
   phpldapadmin:
     image: osixia/phpldapadmin:0.9.0

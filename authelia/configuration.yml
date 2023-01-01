@@ -19,49 +19,51 @@ webauthn:
 duo_api:
   disable: true
 
-# authentication_backend:
+authentication_backend:
   # file:
     # path: /config/users_database.yml
-authentication_backend:
   ldap:
     implementation: custom
     url: ldap://openldap
     timeout: 5s
     base_dn: DC=localtest,DC=me
     users_filter: (&(|({username_attribute}={input})({mail_attribute}={input}))(objectClass=account)) # To allow sign in both with username and email
-    # additional_users_dn: OU=users
-    # groups_filter: (&(member=UID={input},OU=users,DC=example,DC=com)(objectClass=groupOfNames))
     groups_filter: (&(member={dn})(objectClass=groupOfNames))
-    # additional_groups_dn: OU=groups
     group_name_attribute: cn
     username_attribute: uid
     mail_attribute: mail
     display_name_attribute: description
     user: cn=admin,dc=localtest,dc=me
-    password: admin
+    password: password
     start_tls: false
 
 access_control:
   default_policy: deny # deny access for subdomains not defined in the rules section 
   rules:
     - domain: page1.localtest.me
-      # policy: two_factor
       policy: one_factor
       subject:
         - 'group:page1'
+        - 'group:admin'
     - domain: page2.localtest.me
-      # policy: two_factor
       policy: one_factor
       subject:
         - 'group:page2'
-    - domain: ['traefik.localtest.me', 'ldap.localtest.me']
+        - 'group:admin'
+    - domain: ['traefik.localtest.me']
+      policy: one_factor
+      subject:
+        - 'group:admin'
+    - domain: ['ldap.localtest.me']
       policy: bypass
+
 
 session:
   name: authelia_session
   secret: unsecure_session_secret
-  expiration: 3600  # 1 hour
-  inactivity: 300  # 5 minutes
+  expiration: 1M
+  inactivity: 1M
+  remember_me_duration: 1M
   domain: localtest.me  # Should match whatever your root protected domain is
 
 regulation:
@@ -77,4 +79,3 @@ storage:
 notifier:
   filesystem:
     filename: /config/notification.txt
-
