@@ -42,7 +42,7 @@ To access any of the following applications, you will be redirected to the [Auth
 </table>
 
 # Users
-You can use username or email for login.
+You can use username or email for login. You can also reset the default password through a Authelia portal (you will receive an email in `authelia/notification.txt`).
 
 <table>
     <tr>
