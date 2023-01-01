@@ -1,4 +1,4 @@
-# Setup [Authelia](https://www.authelia.com/) in front of [Traefik proxy](https://doc.traefik.io/traefik/) with local TLS
+# Setup [Authelia](https://www.authelia.com/) integrated with [Traefik reverse proxy](https://doc.traefik.io/traefik/)
 1. `git clone git@github.com:erykio/authelia-starter.git`
 2. `cd authelia-starter`
 3. Download [mkcert](https://github.com/FiloSottile/mkcert)
